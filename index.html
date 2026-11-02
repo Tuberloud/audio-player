@@ -15,6 +15,8 @@
             --btn-hover: #e0e0e0;
             --wheel-bg: radial-gradient(circle, #f5f5f5 0%, #dcdcdc 100%);
             --wheel-border: #ccc;
+            --highlight-bg: #4a5d4e;
+            --highlight-text: #fff;
         }
 
         body.dark-mode {
@@ -27,6 +29,8 @@
             --btn-hover: #4a4a4a;
             --wheel-bg: radial-gradient(circle, #333333 0%, #222222 100%);
             --wheel-border: #444;
+            --highlight-bg: #334433;
+            --highlight-text: #fff;
         }
 
         body {
@@ -75,18 +79,28 @@
             cursor: pointer;
         }
 
-        /* iPod LCD Screen */
+        /* iPod LCD Screen Container */
+        .screen-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .ipod-screen {
             background-color: var(--screen-bg);
             border: 3px solid var(--screen-border);
             border-radius: 8px;
-            padding: 10px;
-            min-height: 100px;
+            padding: 8px;
+            height: 110px;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
             color: #111;
+            text-align: left;
+            overflow: hidden;
+            position: relative;
         }
 
         body.dark-mode .ipod-screen {
@@ -96,42 +110,52 @@
         .screen-top {
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             opacity: 0.8;
+            border-bottom: 1px solid var(--screen-border);
+            padding-bottom: 2px;
         }
 
-        #track-info {
+        /* iPod Menu Styles */
+        .ipod-menu {
+            overflow-y: auto;
+            max-height: 70px;
             font-size: 12px;
-            font-weight: bold;
-            word-break: break-all;
-            margin: 4px 0;
+            margin: 2px 0;
         }
 
-        /* Controls under screen: Loop Switch & Track Selector */
-        .sub-screen-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0 5px 0;
-            padding: 0 4px;
+        .menu-item {
+            padding: 2px 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-radius: 3px;
         }
 
+        .menu-item.selected {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+        }
+
+        /* Loop Switch on the Right Side */
         .loop-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .loop-icon {
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 36px;
-            height: 20px;
+            width: 20px;
+            height: 36px;
         }
 
         .switch input {
@@ -166,19 +190,7 @@
         }
 
         input:checked + .slider:before {
-            transform: translateX(16px);
-        }
-
-        /* Saved files dropdown list */
-        .playlist-select {
-            background: var(--btn-bg);
-            color: var(--text-color);
-            border: 1px solid var(--wheel-border);
-            border-radius: 6px;
-            font-size: 11px;
-            padding: 4px;
-            max-width: 150px;
-            cursor: pointer;
+            transform: translateY(-16px);
         }
 
         /* Click Wheel Area */
@@ -207,8 +219,8 @@
         }
 
         .wheel-menu { top: 12px; }
-        .wheel-rewind { left: 8px; }   /* Moved out further */
-        .wheel-forward { right: 8px; } /* Moved out further */
+        .wheel-rewind { left: 8px; }
+        .wheel-forward { right: 8px; }
         .wheel-play { bottom: 12px; }
 
         .center-button {
@@ -288,20 +300,24 @@
             <button class="theme-btn" id="themeToggleBtn">Theme</button>
         </div>
         
-        <!-- iPod Screen -->
-        <div class="ipod-screen">
-            <div class="screen-top">
-                <span id="batteryStatus">🔋 100%</span>
-                <span id="playStateIndicator">▶</span>
+        <!-- iPod Screen and Right-Side Loop Switch -->
+        <div class="screen-wrapper">
+            <div class="ipod-screen">
+                <div class="screen-top">
+                    <span id="screenTitle">Music</span>
+                    <span id="playStateIndicator">▶</span>
+                </div>
+                <!-- iPod Menu List -->
+                <div class="ipod-menu" id="ipodMenu">
+                    <div class="menu-item selected" data-action="upload">📁 Upload New File...</div>
+                    <div class="menu-item" data-action="list">🎵 Saved Songs</div>
+                </div>
+                <div>
+                    <input type="range" id="progressBar" value="0" max="100" step="0.1">
+                </div>
             </div>
-            <div id="track-info">No file loaded</div>
-            <div>
-                <input type="range" id="progressBar" value="0" max="100" step="0.1">
-            </div>
-        </div>
 
-        <!-- Loop switch and Private Playlist Selector right under screen -->
-        <div class="sub-screen-controls">
+            <!-- Loop Switch on the Right Side -->
             <div class="loop-container">
                 <span class="loop-icon">🔁</span>
                 <label class="switch">
@@ -309,20 +325,17 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <select id="savedFilesSelect" class="playlist-select">
-                <option value="">📁 Saved Files...</option>
-            </select>
         </div>
 
         <audio id="audioElement" playsinline></audio>
 
         <!-- Click Wheel -->
         <div class="click-wheel-container">
-            <button class="wheel-btn wheel-menu" id="browseBtn">BROWSE</button>
+            <button class="wheel-btn wheel-menu" id="browseBtn">MENU</button>
             <button class="wheel-btn wheel-rewind" id="rewindBtn">⏮ -15s</button>
             <button class="wheel-btn wheel-forward" id="forwardBtn">+15s ⏭</button>
             <button class="wheel-btn wheel-play" id="playPauseBtn">⏯</button>
-            <div class="center-button" id="centerActionBtn">PLAY</div>
+            <div class="center-button" id="centerActionBtn">SELECT</div>
         </div>
 
         <input type="file" id="fileInput" accept="audio/*, .m4a, .mp3, .wav" style="display: none;">
@@ -361,62 +374,106 @@
         const progressBar = document.getElementById('progressBar');
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
-        const trackInfo = document.getElementById('track-info');
         const speedRange = document.getElementById('speedRange');
         const speedValue = document.getElementById('speedValue');
         const sleepTimerSelect = document.getElementById('sleepTimerSelect');
         const timerDisplay = document.getElementById('timerDisplay');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const playStateIndicator = document.getElementById('playStateIndicator');
-        const savedFilesSelect = document.getElementById('savedFilesSelect');
+        const ipodMenu = document.getElementById('ipodMenu');
+        const screenTitle = document.getElementById('screenTitle');
 
         let sleepTimeout = null;
         let countdownInterval = null;
+        let currentMenuState = 'main'; // 'main', 'songs', 'now_playing'
+        let selectedMenuIndex = 0;
 
-        // Load saved private files list on startup
-        function loadSavedPlaylist() {
-            let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
-            savedFilesSelect.innerHTML = '<option value="">📁 Saved Files...</option>';
-            savedList.forEach((item, index) => {
-                const opt = document.createElement('option');
-                opt.value = index;
-                opt.textContent = item.name;
-                savedFilesSelect.appendChild(opt);
+        function renderMenu() {
+            ipodMenu.innerHTML = '';
+            let items = [];
+
+            if (currentMenuState === 'main') {
+                screenTitle.textContent = 'Music';
+                items = [
+                    { label: '📁 Upload New File...', action: 'upload' },
+                    { label: '🎵 Saved Songs', action: 'songs' }
+                ];
+                if (audio.src) {
+                    items.push({ label: '▶ Now Playing', action: 'now_playing' });
+                }
+            } else if (currentMenuState === 'songs') {
+                screenTitle.textContent = 'Saved Songs';
+                let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
+                if (savedList.length === 0) {
+                    items = [{ label: '(No saved songs)', action: 'none' }];
+                } else {
+                    items = savedList.map((song, idx) => ({ label: `🎵 ${song.name}`, action: 'play_song', index: idx }));
+                }
+            } else if (currentMenuState === 'now_playing') {
+                screenTitle.textContent = 'Now Playing';
+                let currentSongName = localStorage.getItem('last_played_name') || 'Audio File';
+                items = [{ label: `Playing: ${currentSongName}`, action: 'none' }];
+            }
+
+            items.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = `menu-item ${idx === selectedMenuIndex ? 'selected' : ''}`;
+                div.textContent = item.label;
+                div.onclick = () => {
+                    selectedMenuIndex = idx;
+                    triggerAction(item);
+                };
+                ipodMenu.appendChild(div);
             });
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadSavedPlaylist();
-            const lastPlayedIndex = localStorage.getItem('last_played_index');
-            let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
-            if (lastPlayedIndex !== null && savedList[lastPlayedIndex]) {
-                audio.src = savedList[lastPlayedIndex].src;
-                trackInfo.textContent = savedList[lastPlayedIndex].name;
-                savedFilesSelect.value = lastPlayedIndex;
+        function triggerAction(item) {
+            if (!item) return;
+            if (item.action === 'upload') {
+                fileInput.click();
+            } else if (item.action === 'songs') {
+                currentMenuState = 'songs';
+                selectedMenuIndex = 0;
+                renderMenu();
+            } else if (item.action === 'now_playing') {
+                // Stay or toggle
+            } else if (item.action === 'play_song') {
+                playSavedSong(item.index);
             }
-        });
+        }
 
-        themeToggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-        });
+        function playSavedSong(index) {
+            let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
+            let song = savedList[index];
+            if (song) {
+                audio.src = song.src;
+                audio.load();
+                localStorage.setItem('last_played_name', song.name);
+                localStorage.setItem('last_played_index', index);
+                audio.play().then(() => {
+                    playStateIndicator.textContent = '▶';
+                    centerActionBtn.textContent = 'PAUSE';
+                }).catch(() => {
+                    playStateIndicator.textContent = '❚❚';
+                    centerActionBtn.textContent = 'PLAY';
+                });
+                currentMenuState = 'now_playing';
+                renderMenu();
+            }
+        }
 
-        browseBtn.addEventListener('click', () => fileInput.click());
-        
+        // Handle File Upload smoothly via FileReader
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) saveAndLoadAudioFile(file);
-        });
+            if (!file) return;
 
-        function saveAndLoadAudioFile(file) {
-            trackInfo.textContent = `Loading...`;
+            screenTitle.textContent = 'Loading...';
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Data = e.target.result;
-                
-                // Save privately to localStorage playlist array
+            
+            reader.onload = function(event) {
+                const base64Data = event.target.result;
                 let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
                 
-                // Check if file already exists to avoid duplicates
                 let existingIndex = savedList.findIndex(item => item.name === file.name);
                 if (existingIndex !== -1) {
                     savedList[existingIndex].src = base64Data;
@@ -426,15 +483,11 @@
                 }
 
                 localStorage.setItem('private_playlist', JSON.stringify(savedList));
+                localStorage.setItem('last_played_name', file.name);
                 localStorage.setItem('last_played_index', existingIndex);
-                
-                loadSavedPlaylist();
-                savedFilesSelect.value = existingIndex;
 
                 audio.src = base64Data;
                 audio.load();
-                trackInfo.textContent = file.name;
-
                 audio.play().then(() => {
                     playStateIndicator.textContent = '▶';
                     centerActionBtn.textContent = 'PAUSE';
@@ -442,30 +495,43 @@
                     playStateIndicator.textContent = '❚❚';
                     centerActionBtn.textContent = 'PLAY';
                 });
+
+                currentMenuState = 'now_playing';
+                renderMenu();
             };
+
             reader.readAsDataURL(file);
-        }
+        });
 
-        // Switch between uploaded files from dropdown
-        savedFilesSelect.addEventListener('change', () => {
-            if (savedFilesSelect.value === "") return;
-            let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
-            let index = parseInt(savedFilesSelect.value);
-            let selectedTrack = savedList[index];
+        // MENU Button takes you back to main menu or previous layer
+        browseBtn.addEventListener('click', () => {
+            if (currentMenuState === 'songs' || currentMenuState === 'now_playing') {
+                currentMenuState = 'main';
+                selectedMenuIndex = 0;
+                renderMenu();
+            } else {
+                currentMenuState = 'main';
+                selectedMenuIndex = 0;
+                renderMenu();
+            }
+        });
 
-            if (selectedTrack) {
-                audio.src = selectedTrack.src;
-                audio.load();
-                trackInfo.textContent = selectedTrack.name;
-                localStorage.setItem('last_played_index', index);
-
-                audio.play().then(() => {
-                    playStateIndicator.textContent = '▶';
-                    centerActionBtn.textContent = 'PAUSE';
-                }).catch(() => {
-                    playStateIndicator.textContent = '❚❚';
-                    centerActionBtn.textContent = 'PLAY';
-                });
+        // Center Button Select Action
+        centerActionBtn.addEventListener('click', () => {
+            let savedList = currentMenuState === 'songs' ? JSON.parse(localStorage.getItem('private_playlist') || '[]') : [];
+            if (currentMenuState === 'main') {
+                if (selectedMenuIndex === 0) fileInput.click();
+                else if (selectedMenuIndex === 1) {
+                    currentMenuState = 'songs';
+                    selectedMenuIndex = 0;
+                    renderMenu();
+                }
+            } else if (currentMenuState === 'songs') {
+                if (savedList.length > 0) {
+                    playSavedSong(selectedMenuIndex);
+                }
+            } else if (currentMenuState === 'now_playing') {
+                togglePlay();
             }
         });
 
@@ -486,7 +552,6 @@
         }
 
         playPauseBtn.addEventListener('click', togglePlay);
-        centerActionBtn.addEventListener('click', togglePlay);
 
         rewindBtn.addEventListener('click', () => {
             audio.currentTime = Math.max(0, audio.currentTime - 15);
@@ -496,7 +561,6 @@
             audio.currentTime = Math.min(audio.duration, audio.currentTime + 15);
         });
 
-        // Loop Switch Handler
         loopToggle.addEventListener('change', () => {
             audio.loop = loopToggle.checked;
         });
@@ -519,42 +583,12 @@
             speedValue.textContent = speed.toFixed(2);
         });
 
-        sleepTimerSelect.addEventListener('change', () => {
-            clearTimeout(sleepTimeout);
-            clearInterval(countdownInterval);
-            timerDisplay.textContent = '';
-
-            const minutes = parseInt(sleepTimerSelect.value);
-            if (minutes === 0) return;
-
-            let timeRemaining = minutes * 60;
-            
-            countdownInterval = setInterval(() => {
-                if (timeRemaining <= 0) {
-                    clearInterval(countdownInterval);
-                    return;
-                }
-                timeRemaining--;
-                let m = Math.floor(timeRemaining / 60);
-                let s = timeRemaining % 60;
-                timerDisplay.textContent = `Stopping in ${m}:${s < 10 ? '0' : ''}${s}`;
-            }, 1000);
-
-            sleepTimeout = setTimeout(() => {
-                audio.pause();
-                playStateIndicator.textContent = '❚❚';
-                centerActionBtn.textContent = 'PLAY';
-                sleepTimerSelect.value = "0";
-                timerDisplay.textContent = 'Timer finished';
-                clearInterval(countdownInterval);
-            }, minutes * 60 * 1000);
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
         });
 
-        audio.addEventListener('ended', () => {
-            if (!audio.loop) {
-                playStateIndicator.textContent = '❚❚';
-                centerActionBtn.textContent = 'PLAY';
-            }
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
         });
     </script>
 </body>
