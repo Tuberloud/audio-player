@@ -3,159 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Audio Player</title>
+    <title>iPod Audio Player</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --container-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --text-secondary: #aaa;
-            --border-color: #333;
-            --drop-zone-bg: #252525;
-            --drop-zone-border: #007bff;
-            --drop-zone-hover: #2a2a3a;
-            --btn-bg: #007bff;
-            --btn-hover: #0056b3;
-            --btn-active: #28a745;
-            --btn-active-hover: #218838;
-            --input-bg: #2a2a2a;
+            --ipod-bg: linear-gradient(135deg, #e6e6e6 0%, #b3b3b3 100%);
+            --screen-bg: #c7d2c5;
+            --screen-border: #4a5d4e;
+            --text-color: #222;
+            --text-secondary: #555;
+            --btn-bg: #fcfcfc;
+            --btn-hover: #e0e0e0;
+            --wheel-bg: radial-gradient(circle, #f5f5f5 0%, #dcdcdc 100%);
+            --wheel-border: #ccc;
         }
 
-        body.light-mode {
-            --bg-color: #f4f4f9;
-            --container-bg: #ffffff;
-            --text-color: #333333;
-            --text-secondary: #666666;
-            --border-color: #eee;
-            --drop-zone-bg: #fafafa;
-            --drop-zone-border: #007bff;
-            --drop-zone-hover: #e9f0ff;
-            --btn-bg: #007bff;
-            --btn-hover: #0056b3;
-            --btn-active: #28a745;
-            --btn-active-hover: #218838;
-            --input-bg: #f9f9f9;
+        body.dark-mode {
+            --ipod-bg: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            --screen-bg: #1e261f;
+            --screen-border: #334433;
+            --text-color: #e0e0e0;
+            --text-secondary: #aaa;
+            --btn-bg: #3a3a3a;
+            --btn-hover: #4a4a4a;
+            --wheel-bg: radial-gradient(circle, #333333 0%, #222222 100%);
+            --wheel-border: #444;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            transition: background 0.3s, color 0.3s;
         }
 
+        /* iPod Chassis */
         .player-container {
-            background: var(--container-bg);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            width: 380px;
+            background: var(--ipod-bg);
+            padding: 25px 20px;
+            border-radius: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.6);
+            width: 320px;
             text-align: center;
-            transition: background 0.3s;
+            border: 2px solid #888;
+            box-sizing: border-box;
         }
 
         .header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         h2 {
             margin: 0;
-            font-size: 22px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
         }
 
         .theme-btn {
             background: transparent;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--text-secondary);
             color: var(--text-color);
-            padding: 6px 10px;
-            font-size: 12px;
-            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        .drop-zone {
-            border: 2px dashed var(--drop-zone-border);
-            background: var(--drop-zone-bg);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 15px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .drop-zone.dragover {
-            background: var(--drop-zone-hover);
+        /* iPod LCD Screen */
+        .ipod-screen {
+            background-color: var(--screen-bg);
+            border: 3px solid var(--screen-border);
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            color: #111;
         }
 
-        .controls {
+        body.dark-mode .ipod-screen {
+            color: #d0ded0;
+        }
+
+        .screen-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        #track-info {
+            font-size: 13px;
+            font-weight: bold;
+            word-break: break-all;
+            margin: 8px 0;
+        }
+
+        /* Click Wheel Area */
+        .click-wheel-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background: var(--wheel-bg);
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.4);
+            border: 1px solid var(--wheel-border);
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
+            align-items: center;
         }
 
-        button {
-            padding: 12px 16px;
+        .wheel-btn {
+            position: absolute;
+            background: transparent;
             border: none;
-            background: var(--btn-bg);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
+            font-size: 11px;
             font-weight: bold;
-            transition: background 0.2s;
+            color: var(--text-secondary);
+            cursor: pointer;
         }
-        button:hover {
+
+        .wheel-menu { top: 12px; }
+        .wheel-rewind { left: 15px; }
+        .wheel-forward { right: 15px; }
+        .wheel-play { bottom: 12px; }
+
+        .center-button {
+            width: 75px;
+            height: 75px;
+            background: var(--btn-bg);
+            border-radius: 50%;
+            border: 1px solid var(--wheel-border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .center-button:hover {
             background: var(--btn-hover);
         }
-        button.active {
-            background: var(--btn-active);
-        }
-        button.active:hover {
-            background: var(--btn-active-hover);
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed #888;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
         }
 
         input[type="range"] {
             width: 100%;
-            height: 8px;
-            margin: 15px 0;
-            accent-color: var(--btn-bg);
+            accent-color: #555;
             cursor: pointer;
+            margin: 5px 0;
         }
 
-        .section-group {
-            margin-top: 20px;
-            font-size: 15px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
+        /* Bottom Controls & Slider Switch */
+        .bottom-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 12px;
+        }
+
+        .speed-control {
             text-align: left;
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex-grow: 1;
+        }
+
+        /* Loop Switch Custom Style */
+        .loop-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loop-icon {
+            font-size: 14px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #28a745; /* Turns green when on */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+
+        /* Sleep Timer Section */
+        .section-group {
+            margin-top: 12px;
+            font-size: 12px;
+            text-align: left;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 10px;
         }
 
         select {
             width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--input-bg);
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid var(--wheel-border);
+            background: var(--btn-bg);
             color: var(--text-color);
-            font-size: 15px;
-            margin-top: 8px;
+            font-size: 12px;
+            margin-top: 4px;
             cursor: pointer;
         }
 
-        #track-info {
-            font-size: 14px;
+        #timerDisplay {
+            font-size: 11px;
             color: var(--text-secondary);
-            margin-top: 10px;
-            word-break: break-all;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -163,34 +279,52 @@
 
     <div class="player-container">
         <div class="header-row">
-            <h2>Audio Player</h2>
-            <button class="theme-btn" id="themeToggleBtn">Light Mode</button>
+            <h2>iPod</h2>
+            <button class="theme-btn" id="themeToggleBtn">Theme</button>
         </div>
         
-        <div class="drop-zone" id="dropZone">
-            Drag & Drop audio file here or<br><br>
-            <button onclick="document.getElementById('fileInput').click()">Browse Files</button>
-            <input type="file" id="fileInput" accept="audio/*, .m4a, .mp3, .wav" style="display: none;">
+        <!-- iPod Screen -->
+        <div class="ipod-screen">
+            <div class="screen-top">
+                <span id="batteryStatus">🔋 100%</span>
+                <span id="playStateIndicator">▶</span>
+            </div>
+            <div id="track-info">No file loaded</div>
+            <div>
+                <input type="range" id="progressBar" value="0" max="100" step="0.1">
+            </div>
         </div>
-
-        <div id="track-info">No file loaded</div>
 
         <audio id="audioElement" playsinline></audio>
 
-        <input type="range" id="progressBar" value="0" max="100" step="0.1">
-
-        <div class="controls">
-            <button id="rewindBtn">-15s</button>
-            <button id="playPauseBtn">Play</button>
-            <button id="forwardBtn">+15s</button>
-            <button id="loopBtn">Loop: Off</button>
+        <!-- Click Wheel -->
+        <div class="click-wheel-container">
+            <button class="wheel-btn wheel-menu" id="browseBtn">BROWSE</button>
+            <button class="wheel-btn wheel-rewind" id="rewindBtn">⏮ -15s</button>
+            <button class="wheel-btn wheel-forward" id="forwardBtn">+15s ⏭</button>
+            <button class="wheel-btn wheel-play" id="playPauseBtn">⏯</button>
+            <div class="center-button" id="centerActionBtn">PLAY</div>
         </div>
 
-        <div class="section-group">
-            <label for="speedRange">Speed: <span id="speedValue">1.00</span>x</label><br>
-            <input type="range" id="speedRange" min="0.5" max="3.0" step="0.05" value="1.0">
+        <input type="file" id="fileInput" accept="audio/*, .m4a, .mp3, .wav" style="display: none;">
+
+        <!-- Speed & Loop Row -->
+        <div class="bottom-controls">
+            <div class="speed-control">
+                <label for="speedRange">Speed: <span id="speedValue">1.00</span>x</label><br>
+                <input type="range" id="speedRange" min="0.5" max="3.0" step="0.05" value="1.0">
+            </div>
+            
+            <div class="loop-container">
+                <span class="loop-icon">🔁</span>
+                <label class="switch">
+                    <input type="checkbox" id="loopToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
 
+        <!-- Sleep Timer at the bottom -->
         <div class="section-group">
             <label for="sleepTimerSelect">Sleep Timer:</label>
             <select id="sleepTimerSelect">
@@ -200,98 +334,100 @@
                 <option value="30">30 Minutes</option>
                 <option value="60">60 Minutes</option>
             </select>
-            <div id="timerDisplay" style="font-size: 13px; color: var(--text-secondary); margin-top: 8px;"></div>
+            <div id="timerDisplay"></div>
         </div>
+        
+        <div style="font-size: 10px; color: var(--text-secondary); margin-top: 10px;">🔒 Private Local Storage Enabled</div>
     </div>
 
     <script>
         const audio = document.getElementById('audioElement');
         const playPauseBtn = document.getElementById('playPauseBtn');
+        const centerActionBtn = document.getElementById('centerActionBtn');
         const rewindBtn = document.getElementById('rewindBtn');
         const forwardBtn = document.getElementById('forwardBtn');
-        const loopBtn = document.getElementById('loopBtn');
+        const loopToggle = document.getElementById('loopToggle');
         const progressBar = document.getElementById('progressBar');
         const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('dropZone');
+        const browseBtn = document.getElementById('browseBtn');
         const trackInfo = document.getElementById('track-info');
         const speedRange = document.getElementById('speedRange');
         const speedValue = document.getElementById('speedValue');
         const sleepTimerSelect = document.getElementById('sleepTimerSelect');
         const timerDisplay = document.getElementById('timerDisplay');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const playStateIndicator = document.getElementById('playStateIndicator');
 
         let sleepTimeout = null;
         let countdownInterval = null;
 
-        themeToggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            themeToggleBtn.textContent = document.body.classList.contains('light-mode') ? 'Dark Mode' : 'Light Mode';
+        // Load private audio file from localStorage if available
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedAudio = localStorage.getItem('private_audio_src');
+            const savedName = localStorage.getItem('private_audio_name');
+            if (savedAudio && savedName) {
+                audio.src = savedAudio;
+                trackInfo.textContent = `${savedName}`;
+            }
         });
 
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        browseBtn.addEventListener('click', () => fileInput.click());
+        
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) loadAudioFile(file);
         });
 
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file) {
-                loadAudioFile(file);
-            } else {
-                alert('Please select a valid audio file.');
-            }
-        });
-
         function loadAudioFile(file) {
-            trackInfo.textContent = `Loading: ${file.name}...`;
-
+            trackInfo.textContent = `Loading...`;
             const reader = new FileReader();
             reader.onload = function(e) {
-                audio.src = e.target.result;
+                const base64Data = e.target.result;
+                audio.src = base64Data;
                 audio.load();
-                trackInfo.textContent = `Loaded: ${file.name}`;
+                trackInfo.textContent = `${file.name}`;
 
-                if ('mediaSession' in navigator) {
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        title: file.name,
-                        artist: 'Voice Memo / Audio Player'
-                    });
+                // Save privately to browser's localStorage
+                try {
+                    localStorage.setItem('private_audio_src', base64Data);
+                    localStorage.setItem('private_audio_name', file.name);
+                } catch (err) {
+                    console.log('File too large for localStorage persistence limit.');
                 }
 
                 audio.play().then(() => {
-                    playPauseBtn.textContent = 'Pause';
+                    playStateIndicator.textContent = '▶';
+                    centerActionBtn.textContent = 'PAUSE';
                 }).catch(() => {
-                    trackInfo.textContent = `Loaded: ${file.name} (Tap Play)`;
-                    playPauseBtn.textContent = 'Play';
+                    playStateIndicator.textContent = '❚❚';
+                    centerActionBtn.textContent = 'PLAY';
                 });
             };
             reader.readAsDataURL(file);
         }
 
-        playPauseBtn.addEventListener('click', () => {
+        function togglePlay() {
             if (!audio.src) {
-                alert('Please load an audio file first.');
+                fileInput.click();
                 return;
             }
             if (audio.paused) {
                 audio.play();
-                playPauseBtn.textContent = 'Pause';
+                playStateIndicator.textContent = '▶';
+                centerActionBtn.textContent = 'PAUSE';
             } else {
                 audio.pause();
-                playPauseBtn.textContent = 'Play';
+                playStateIndicator.textContent = '❚❚';
+                centerActionBtn.textContent = 'PLAY';
             }
-        });
+        }
+
+        playPauseBtn.addEventListener('click', togglePlay);
+        centerActionBtn.addEventListener('click', togglePlay);
 
         rewindBtn.addEventListener('click', () => {
             audio.currentTime = Math.max(0, audio.currentTime - 15);
@@ -301,15 +437,9 @@
             audio.currentTime = Math.min(audio.duration, audio.currentTime + 15);
         });
 
-        loopBtn.addEventListener('click', () => {
-            audio.loop = !audio.loop;
-            if (audio.loop) {
-                loopBtn.textContent = 'Loop: On';
-                loopBtn.classList.add('active');
-            } else {
-                loopBtn.textContent = 'Loop: Off';
-                loopBtn.classList.remove('active');
-            }
+        // Loop Switch Handler
+        loopToggle.addEventListener('change', () => {
+            audio.loop = loopToggle.checked;
         });
 
         audio.addEventListener('timeupdate', () => {
@@ -353,16 +483,18 @@
 
             sleepTimeout = setTimeout(() => {
                 audio.pause();
-                playPauseBtn.textContent = 'Play';
+                playStateIndicator.textContent = '❚❚';
+                centerActionBtn.textContent = 'PLAY';
                 sleepTimerSelect.value = "0";
-                timerDisplay.textContent = 'Timer finished (paused)';
+                timerDisplay.textContent = 'Timer finished';
                 clearInterval(countdownInterval);
             }, minutes * 60 * 1000);
         });
 
         audio.addEventListener('ended', () => {
             if (!audio.loop) {
-                playPauseBtn.textContent = 'Play';
+                playStateIndicator.textContent = '❚❚';
+                centerActionBtn.textContent = 'PLAY';
             }
         });
     </script>
