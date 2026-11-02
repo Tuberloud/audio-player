@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPod Audio Player</title>
+    <title>Audio Player</title>
     <style>
         :root {
             --ipod-bg: linear-gradient(135deg, #e6e6e6 0%, #b3b3b3 100%);
@@ -40,7 +40,6 @@
             margin: 0;
         }
 
-        /* iPod Chassis */
         .player-container {
             background: var(--ipod-bg);
             padding: 25px 20px;
@@ -81,8 +80,8 @@
             background-color: var(--screen-bg);
             border: 3px solid var(--screen-border);
             border-radius: 8px;
-            padding: 12px;
-            min-height: 110px;
+            padding: 10px;
+            min-height: 100px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -103,98 +102,21 @@
         }
 
         #track-info {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             word-break: break-all;
-            margin: 8px 0;
+            margin: 4px 0;
         }
 
-        /* Click Wheel Area */
-        .click-wheel-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-            background: var(--wheel-bg);
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.4);
-            border: 1px solid var(--wheel-border);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .wheel-btn {
-            position: absolute;
-            background: transparent;
-            border: none;
-            font-size: 11px;
-            font-weight: bold;
-            color: var(--text-secondary);
-            cursor: pointer;
-        }
-
-        .wheel-menu { top: 12px; }
-        .wheel-rewind { left: 15px; }
-        .wheel-forward { right: 15px; }
-        .wheel-play { bottom: 12px; }
-
-        .center-button {
-            width: 75px;
-            height: 75px;
-            background: var(--btn-bg);
-            border-radius: 50%;
-            border: 1px solid var(--wheel-border);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .center-button:hover {
-            background: var(--btn-hover);
-        }
-
-        /* Drop Zone */
-        .drop-zone {
-            border: 2px dashed #888;
-            background: rgba(0,0,0,0.05);
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 12px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            accent-color: #555;
-            cursor: pointer;
-            margin: 5px 0;
-        }
-
-        /* Bottom Controls & Slider Switch */
-        .bottom-controls {
+        /* Controls under screen: Loop Switch & Track Selector */
+        .sub-screen-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
-            border-top: 1px solid rgba(0,0,0,0.1);
-            padding-top: 12px;
+            margin: 10px 0 5px 0;
+            padding: 0 4px;
         }
 
-        .speed-control {
-            text-align: left;
-            font-size: 12px;
-            color: var(--text-secondary);
-            flex-grow: 1;
-        }
-
-        /* Loop Switch Custom Style */
         .loop-container {
             display: flex;
             align-items: center;
@@ -240,20 +162,103 @@
         }
 
         input:checked + .slider {
-            background-color: #28a745; /* Turns green when on */
+            background-color: #28a745; /* Green when on */
         }
 
         input:checked + .slider:before {
             transform: translateX(16px);
         }
 
+        /* Saved files dropdown list */
+        .playlist-select {
+            background: var(--btn-bg);
+            color: var(--text-color);
+            border: 1px solid var(--wheel-border);
+            border-radius: 6px;
+            font-size: 11px;
+            padding: 4px;
+            max-width: 150px;
+            cursor: pointer;
+        }
+
+        /* Click Wheel Area */
+        .click-wheel-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
+            background: var(--wheel-bg);
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.4);
+            border: 1px solid var(--wheel-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wheel-btn {
+            position: absolute;
+            background: transparent;
+            border: none;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .wheel-menu { top: 12px; }
+        .wheel-rewind { left: 8px; }   /* Moved out further */
+        .wheel-forward { right: 8px; } /* Moved out further */
+        .wheel-play { bottom: 12px; }
+
+        .center-button {
+            width: 75px;
+            height: 75px;
+            background: var(--btn-bg);
+            border-radius: 50%;
+            border: 1px solid var(--wheel-border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .center-button:hover {
+            background: var(--btn-hover);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #555;
+            cursor: pointer;
+            margin: 3px 0;
+        }
+
+        .bottom-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 10px;
+        }
+
+        .speed-control {
+            text-align: left;
+            font-size: 12px;
+            color: var(--text-secondary);
+            width: 100%;
+        }
+
         /* Sleep Timer Section */
         .section-group {
-            margin-top: 12px;
+            margin-top: 10px;
             font-size: 12px;
             text-align: left;
             border-top: 1px solid rgba(0,0,0,0.1);
-            padding-top: 10px;
+            padding-top: 8px;
         }
 
         select {
@@ -279,7 +284,7 @@
 
     <div class="player-container">
         <div class="header-row">
-            <h2>iPod</h2>
+            <h2>Music Player</h2>
             <button class="theme-btn" id="themeToggleBtn">Theme</button>
         </div>
         
@@ -295,6 +300,20 @@
             </div>
         </div>
 
+        <!-- Loop switch and Private Playlist Selector right under screen -->
+        <div class="sub-screen-controls">
+            <div class="loop-container">
+                <span class="loop-icon">🔁</span>
+                <label class="switch">
+                    <input type="checkbox" id="loopToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <select id="savedFilesSelect" class="playlist-select">
+                <option value="">📁 Saved Files...</option>
+            </select>
+        </div>
+
         <audio id="audioElement" playsinline></audio>
 
         <!-- Click Wheel -->
@@ -308,23 +327,15 @@
 
         <input type="file" id="fileInput" accept="audio/*, .m4a, .mp3, .wav" style="display: none;">
 
-        <!-- Speed & Loop Row -->
+        <!-- Speed Control Row -->
         <div class="bottom-controls">
             <div class="speed-control">
                 <label for="speedRange">Speed: <span id="speedValue">1.00</span>x</label><br>
                 <input type="range" id="speedRange" min="0.5" max="3.0" step="0.05" value="1.0">
             </div>
-            
-            <div class="loop-container">
-                <span class="loop-icon">🔁</span>
-                <label class="switch">
-                    <input type="checkbox" id="loopToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
         </div>
 
-        <!-- Sleep Timer at the bottom -->
+        <!-- Sleep Timer at the very bottom -->
         <div class="section-group">
             <label for="sleepTimerSelect">Sleep Timer:</label>
             <select id="sleepTimerSelect">
@@ -337,7 +348,7 @@
             <div id="timerDisplay"></div>
         </div>
         
-        <div style="font-size: 10px; color: var(--text-secondary); margin-top: 10px;">🔒 Private Local Storage Enabled</div>
+        <div style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">🔒 Private Local Storage Enabled</div>
     </div>
 
     <script>
@@ -357,17 +368,31 @@
         const timerDisplay = document.getElementById('timerDisplay');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const playStateIndicator = document.getElementById('playStateIndicator');
+        const savedFilesSelect = document.getElementById('savedFilesSelect');
 
         let sleepTimeout = null;
         let countdownInterval = null;
 
-        // Load private audio file from localStorage if available
+        // Load saved private files list on startup
+        function loadSavedPlaylist() {
+            let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
+            savedFilesSelect.innerHTML = '<option value="">📁 Saved Files...</option>';
+            savedList.forEach((item, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = item.name;
+                savedFilesSelect.appendChild(opt);
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
-            const savedAudio = localStorage.getItem('private_audio_src');
-            const savedName = localStorage.getItem('private_audio_name');
-            if (savedAudio && savedName) {
-                audio.src = savedAudio;
-                trackInfo.textContent = `${savedName}`;
+            loadSavedPlaylist();
+            const lastPlayedIndex = localStorage.getItem('last_played_index');
+            let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
+            if (lastPlayedIndex !== null && savedList[lastPlayedIndex]) {
+                audio.src = savedList[lastPlayedIndex].src;
+                trackInfo.textContent = savedList[lastPlayedIndex].name;
+                savedFilesSelect.value = lastPlayedIndex;
             }
         });
 
@@ -379,25 +404,36 @@
         
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) loadAudioFile(file);
+            if (file) saveAndLoadAudioFile(file);
         });
 
-        function loadAudioFile(file) {
+        function saveAndLoadAudioFile(file) {
             trackInfo.textContent = `Loading...`;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64Data = e.target.result;
+                
+                // Save privately to localStorage playlist array
+                let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
+                
+                // Check if file already exists to avoid duplicates
+                let existingIndex = savedList.findIndex(item => item.name === file.name);
+                if (existingIndex !== -1) {
+                    savedList[existingIndex].src = base64Data;
+                } else {
+                    savedList.push({ name: file.name, src: base64Data });
+                    existingIndex = savedList.length - 1;
+                }
+
+                localStorage.setItem('private_playlist', JSON.stringify(savedList));
+                localStorage.setItem('last_played_index', existingIndex);
+                
+                loadSavedPlaylist();
+                savedFilesSelect.value = existingIndex;
+
                 audio.src = base64Data;
                 audio.load();
-                trackInfo.textContent = `${file.name}`;
-
-                // Save privately to browser's localStorage
-                try {
-                    localStorage.setItem('private_audio_src', base64Data);
-                    localStorage.setItem('private_audio_name', file.name);
-                } catch (err) {
-                    console.log('File too large for localStorage persistence limit.');
-                }
+                trackInfo.textContent = file.name;
 
                 audio.play().then(() => {
                     playStateIndicator.textContent = '▶';
@@ -409,6 +445,29 @@
             };
             reader.readAsDataURL(file);
         }
+
+        // Switch between uploaded files from dropdown
+        savedFilesSelect.addEventListener('change', () => {
+            if (savedFilesSelect.value === "") return;
+            let savedList = JSON.parse(localStorage.getItem('private_playlist') || '[]');
+            let index = parseInt(savedFilesSelect.value);
+            let selectedTrack = savedList[index];
+
+            if (selectedTrack) {
+                audio.src = selectedTrack.src;
+                audio.load();
+                trackInfo.textContent = selectedTrack.name;
+                localStorage.setItem('last_played_index', index);
+
+                audio.play().then(() => {
+                    playStateIndicator.textContent = '▶';
+                    centerActionBtn.textContent = 'PAUSE';
+                }).catch(() => {
+                    playStateIndicator.textContent = '❚❚';
+                    centerActionBtn.textContent = 'PLAY';
+                });
+            }
+        });
 
         function togglePlay() {
             if (!audio.src) {
