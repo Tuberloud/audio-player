@@ -169,16 +169,16 @@
             <button class="theme-btn" id="themeToggleBtn">Light Mode</button>
         </div>
         
-        <!-- Drag and Drop Zone / Import Button -->
+        <!-- Drag and Drop Zone / Import Button (Updated accept attribute for voice memos) -->
         <div class="drop-zone" id="dropZone">
             Drag & Drop audio file here or<br><br>
             <button onclick="document.getElementById('fileInput').click()">Browse Files</button>
-            <input type="file" id="fileInput" accept="audio/*" style="display: none;">
+            <input type="file" id="fileInput" accept="audio/*, .m4a, .mp3, .wav" style="display: none;">
         </div>
 
         <div id="track-info">No file loaded</div>
 
-        <!-- Audio Element -->
+        <!-- Audio Element with playsinline for background play -->
         <audio id="audioElement" playsinline></audio>
 
         <!-- Progress Bar -->
@@ -217,166 +217,4 @@
         const playPauseBtn = document.getElementById('playPauseBtn');
         const rewindBtn = document.getElementById('rewindBtn');
         const forwardBtn = document.getElementById('forwardBtn');
-        const loopBtn = document.getElementById('loopBtn');
-        const progressBar = document.getElementById('progressBar');
-        const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('dropZone');
-        const trackInfo = document.getElementById('track-info');
-        const speedRange = document.getElementById('speedRange');
-        const speedValue = document.getElementById('speedValue');
-        const sleepTimerSelect = document.getElementById('sleepTimerSelect');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-
-        let sleepTimeout = null;
-        let countdownInterval = null;
-
-        // Theme Toggle Logic
-        themeToggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            if (document.body.classList.contains('light-mode')) {
-                themeToggleBtn.textContent = 'Dark Mode';
-            } else {
-                themeToggleBtn.textContent = 'Light Mode';
-            }
-        });
-
-        // Load file from file input
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) loadAudioFile(file);
-        });
-
-        // Drag and Drop events
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('audio/')) {
-                loadAudioFile(file);
-            } else {
-                alert('Please drop a valid audio file.');
-            }
-        });
-
-        function loadAudioFile(file) {
-            const fileURL = URL.createObjectURL(file);
-            audio.src = fileURL;
-            trackInfo.textContent = `Loaded: ${file.name}`;
-            
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: file.name,
-                    artist: 'Voice Memo / Audio Player'
-                });
-            }
-
-            audio.play();
-            playPauseBtn.textContent = 'Pause';
-        }
-
-        // Play / Pause Toggle
-        playPauseBtn.addEventListener('click', () => {
-            if (!audio.src) {
-                alert('Please load an audio file first.');
-                return;
-            }
-            if (audio.paused) {
-                audio.play();
-                playPauseBtn.textContent = 'Pause';
-            } else {
-                audio.pause();
-                playPauseBtn.textContent = 'Play';
-            }
-        });
-
-        // Skip -15s and +15s
-        rewindBtn.addEventListener('click', () => {
-            audio.currentTime = Math.max(0, audio.currentTime - 15);
-        });
-
-        forwardBtn.addEventListener('click', () => {
-            audio.currentTime = Math.min(audio.duration, audio.currentTime + 15);
-        });
-
-        // Loop Toggle
-        loopBtn.addEventListener('click', () => {
-            audio.loop = !audio.loop;
-            if (audio.loop) {
-                loopBtn.textContent = 'Loop: On';
-                loopBtn.classList.add('active');
-            } else {
-                loopBtn.textContent = 'Loop: Off';
-                loopBtn.classList.remove('active');
-            }
-        });
-
-        // Update progress bar as audio plays
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                progressBar.value = (audio.currentTime / audio.duration) * 100;
-            }
-        });
-
-        // Seek audio using progress bar
-        progressBar.addEventListener('input', () => {
-            if (audio.duration) {
-                audio.currentTime = (progressBar.value / 100) * audio.duration;
-            }
-        });
-
-        // Speed adjuster (up to 3.00x)
-        speedRange.addEventListener('input', () => {
-            const speed = parseFloat(speedRange.value);
-            audio.playbackRate = speed;
-            speedValue.textContent = speed.toFixed(2);
-        });
-
-        // Sleep Timer logic
-        sleepTimerSelect.addEventListener('change', () => {
-            clearTimeout(sleepTimeout);
-            clearInterval(countdownInterval);
-            timerDisplay.textContent = '';
-
-            const minutes = parseInt(sleepTimerSelect.value);
-            if (minutes === 0) return;
-
-            let timeRemaining = minutes * 60;
-            
-            countdownInterval = setInterval(() => {
-                if (timeRemaining <= 0) {
-                    clearInterval(countdownInterval);
-                    return;
-                }
-                timeRemaining--;
-                let m = Math.floor(timeRemaining / 60);
-                let s = timeRemaining % 60;
-                timerDisplay.textContent = `Stopping in ${m}:${s < 10 ? '0' : ''}${s}`;
-            }, 1000);
-
-            sleepTimeout = setTimeout(() => {
-                audio.pause();
-                playPauseBtn.textContent = 'Play';
-                sleepTimerSelect.value = "0";
-                timerDisplay.textContent = 'Timer finished (paused)';
-                clearInterval(countdownInterval);
-            }, minutes * 60 * 1000);
-        });
-
-        audio.addEventListener('ended', () => {
-            if (!audio.loop) {
-                playPauseBtn.textContent = 'Play';
-            }
-        });
-    </script>
-</body>
-</html>
+        const loopBtn = document.getElementById('loop
