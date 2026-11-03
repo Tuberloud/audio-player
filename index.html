@@ -306,8 +306,8 @@
 
         #timerDisplay {
             font-size: 11px;
+            font-weight: normal;
             color: var(--text-secondary);
-            margin-top: 4px;
         }
     </style>
 </head>
@@ -372,15 +372,16 @@
 
         <!-- Sleep Timer at the very bottom -->
         <div class="section-group">
-            <label for="sleepTimerSelect">Sleep Timer:</label>
+            <label for="sleepTimerSelect">Sleep Timer: <span id="timerDisplay"></span></label>
             <select id="sleepTimerSelect">
                 <option value="0">Off</option>
+                <option value="2">2 Minutes</option>
+                <option value="3">3 Minutes</option>
                 <option value="5">5 Minutes</option>
                 <option value="15">15 Minutes</option>
                 <option value="30">30 Minutes</option>
                 <option value="60">60 Minutes</option>
             </select>
-            <div id="timerDisplay"></div>
         </div>
         
         <div style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">🔒 Private Local Session Enabled</div>
@@ -578,6 +579,50 @@
             audio.playbackRate = speed;
             speedValue.textContent = speed.toFixed(2);
         });
+
+        // Sleep Timer Working Logic
+        sleepTimerSelect.addEventListener('change', () => {
+            const minutes = parseInt(sleepTimerSelect.value);
+
+            // Clear previous timers if any
+            if (sleepTimeout) clearTimeout(sleepTimeout);
+            if (countdownInterval) clearInterval(countdownInterval);
+            timerDisplay.textContent = '';
+
+            if (minutes > 0) {
+                let totalSeconds = minutes * 60;
+
+                // Initial display text update
+                updateTimerDisplay(totalSeconds);
+
+                countdownInterval = setInterval(() => {
+                    totalSeconds--;
+                    if (totalSeconds > 0) {
+                        updateTimerDisplay(totalSeconds);
+                    } else {
+                        clearInterval(countdownInterval);
+                        audio.pause();
+                        playStateIndicator.textContent = '❚❚';
+                        centerActionBtn.textContent = 'PLAY';
+                        timerDisplay.textContent = ' (Expired)';
+                        sleepTimerSelect.value = "0";
+                    }
+                }, 1000);
+
+                sleepTimeout = setTimeout(() => {
+                    audio.pause();
+                    playStateIndicator.textContent = '❚❚';
+                    centerActionBtn.textContent = 'PLAY';
+                    sleepTimerSelect.value = "0";
+                }, minutes * 60 * 1000);
+            }
+        });
+
+        function updateTimerDisplay(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timerDisplay.textContent = `(${mins}:${secs < 10 ? '0' : ''}${secs} left)`;
+        }
 
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
